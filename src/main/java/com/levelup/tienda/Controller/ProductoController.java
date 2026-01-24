@@ -24,6 +24,7 @@ public class ProductoController {
 
     @PostMapping
     public Producto crear(@RequestBody Producto producto) {
+        System.out.println(producto.getNombre());
         return repo.save(producto);
     }
 }
