@@ -1,4 +1,4 @@
-package com.levelup.tienda.controller;
+package com.levelup.tienda.Controller;
 
 import com.levelup.tienda.model.Producto;
 import com.levelup.tienda.repository.ProductoRepository;
