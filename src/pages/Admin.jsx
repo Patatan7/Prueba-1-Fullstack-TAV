@@ -36,9 +36,6 @@ export default function Admin() {
     .catch(err => console.error(err));
   }, []);
 
-
-
-
   // ======================
   // SUBMIT FORM
   // ======================
@@ -70,7 +67,6 @@ export default function Admin() {
     setProductos([...productos, productoGuardado]);
     limpiarFormulario();
   };
-
 
   const editarProducto = (index) => {
     const p = productos[index];
