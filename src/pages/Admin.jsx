@@ -30,19 +30,19 @@ export default function Admin() {
   // CARGAR PRODUCTOS
   // ======================
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("productos")) || [];
-    setProductos(data);
+  fetch("http://localhost:8080/api/productos")
+    .then(res => res.json())
+    .then(data => setProductos(data))
+    .catch(err => console.error(err));
   }, []);
 
-  const guardarProductos = (lista) => {
-    localStorage.setItem("productos", JSON.stringify(lista));
-    setProductos(lista);
-  };
+
+
 
   // ======================
   // SUBMIT FORM
   // ======================
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const nuevoProducto = {
@@ -52,17 +52,25 @@ export default function Admin() {
       descripcion
     };
 
-    let lista = [...productos];
+    const res = await fetch("http://localhost:8080/api/productos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(nuevoProducto)
+    });
 
-    if (productoIndex === "") {
-      lista.push(nuevoProducto);
-    } else {
-      lista[productoIndex] = nuevoProducto;
+    if (!res.ok) {
+      alert("Error al guardar producto");
+      return;
     }
 
-    guardarProductos(lista);
+    const productoGuardado = await res.json();
+
+    setProductos([...productos, productoGuardado]);
     limpiarFormulario();
   };
+
 
   const editarProducto = (index) => {
     const p = productos[index];
