@@ -17,7 +17,7 @@ export default function NavbarApp() {
         <Nav className="ms-auto align-items-center gap-2">
           <Nav.Link as={Link} to="/">Inicio</Nav.Link>
           <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
-          <Nav.Link as={Link} to="/aboutus">Sobre nosotros</Nav.Link>
+          <Nav.Link as={Link} to="/historia">Sobre nosotros</Nav.Link>
 
           <span className="nav-divider">|</span>
 

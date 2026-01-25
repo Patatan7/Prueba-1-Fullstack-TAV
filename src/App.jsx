@@ -8,10 +8,12 @@ import Contacto from "./pages/Contacto";
 import Carrito from "./pages/Carrito";
 import ProductoDetalle from "./pages/ProductoDetalle";
 import Admin from "./pages/Admin";
+import Historia from "./pages/Historia"
 
 // Componentes globales
 import NavbarApp from "./components/Navbar";
 import FloatingCart from "./components/FloatingCart";
+import Footer from "./components/Footer"
 
 // CSS global
 import "./css/styles.css";
@@ -29,7 +31,9 @@ function App() {
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/producto/:id" element={<ProductoDetalle />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/historia" element={<Historia />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
