@@ -3,27 +3,18 @@ import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Button from "react-bootstrap/Button";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function NavbarApp() {
-  const [usuario, setUsuario] = useState(null);
-
-  useEffect(() => {
-    const u = JSON.parse(localStorage.getItem("usuarioActivo"));
-    setUsuario(u);
-  }, []);
-
-  const logout = () => {
-    localStorage.removeItem("usuarioActivo");
-    setUsuario(null);
-  };
+  const { usuario, logout } = useContext(AuthContext);
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand as={Link} to="/">Level-Up</Navbar.Brand>
 
-        <Nav className="ms-auto gap-2">
+        <Nav className="ms-auto align-items-center gap-2">
           <Nav.Link as={Link} to="/">Inicio</Nav.Link>
           <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
 
@@ -54,7 +45,7 @@ export default function NavbarApp() {
             </>
           ) : (
             <>
-              <Button className="btn btn-outline-light btn-sm"
+              <Button
                 as={Link}
                 to="/login"
                 variant="outline-light"
@@ -63,7 +54,7 @@ export default function NavbarApp() {
                 Login
               </Button>
 
-              <Button className="btn btn-outline-light btn-sm"
+              <Button
                 as={Link}
                 to="/registro"
                 variant="outline-light"

@@ -1,26 +1,33 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
-import { obtenerProductos } from "../data/productos";
 import { CarritoContext } from "../context/CarritoContext";
+import {
+  obtenerProductoPorId,
+  obtenerProductos
+} from "../data/productosApi";
 
 export default function ProductoDetalle() {
-  const { id } = useParams();
-  const indexProducto = Number(id);
-
+  const { id } = useParams(); // ID REAL
   const { agregarAlCarrito } = useContext(CarritoContext);
 
   const [producto, setProducto] = useState(null);
   const [otrosProductos, setOtrosProductos] = useState([]);
 
   useEffect(() => {
-    const productos = obtenerProductos();
-    const prod = productos[indexProducto];
+    async function cargar() {
+      try {
+        const prod = await obtenerProductoPorId(id);
+        setProducto(prod);
 
-    if (!prod) return;
+        const todos = await obtenerProductos();
+        setOtrosProductos(todos.filter(p => p.id !== prod.id));
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
-    setProducto(prod);
-    setOtrosProductos(productos.filter((_, i) => i !== indexProducto));
-  }, [indexProducto]);
+    cargar();
+  }, [id]);
 
   if (!producto) {
     return (
@@ -33,7 +40,7 @@ export default function ProductoDetalle() {
   return (
     <main className="container my-5">
 
-      {/* DETALLE PRODUCTO */}
+      {/* DETALLE */}
       <section className="row mb-5">
         <div className="col-md-6">
           <img
@@ -61,13 +68,13 @@ export default function ProductoDetalle() {
         </div>
       </section>
 
-      {/* OTROS PRODUCTOS */}
+      {/* OTROS */}
       <section>
         <h3 className="mb-4">Otros productos</h3>
 
         <div className="row">
-          {otrosProductos.map((p, i) => (
-            <div className="col-md-3 mb-4" key={i}>
+          {otrosProductos.map((p) => (
+            <div className="col-md-3 mb-4" key={p.id}>
               <div className="card h-100">
                 <img
                   src={p.imagen}
@@ -81,7 +88,7 @@ export default function ProductoDetalle() {
                   <p className="card-text">${p.precio}</p>
 
                   <Link
-                    to={`/producto/${i}`}
+                    to={`/producto/${p.id}`}
                     className="btn btn-outline-primary btn-sm"
                   >
                     Ver detalle

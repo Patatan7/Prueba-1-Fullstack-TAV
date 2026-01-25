@@ -23,7 +23,7 @@ export default function ProductoCard({ producto, index }) {
 
           <div className="d-grid gap-2">
             <Link
-              to={`/producto/${index}`}
+              to={`/producto/${producto.id}`}
               className="btn btn-outline-secondary btn-sm"
             >
               Ver detalle
