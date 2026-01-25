@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { CarritoContext } from "../context/CarritoContext";
+import { formatoCLP } from "../utils/formatoMoneda";
 
 export default function ProductoCard({ producto, index }) {
   const { agregarAlCarrito } = useContext(CarritoContext);
@@ -22,7 +23,7 @@ export default function ProductoCard({ producto, index }) {
 
         <Card.Body className="text-center">
           <Card.Title>{producto.nombre}</Card.Title>
-          <Card.Text>${producto.precio}</Card.Text>
+          <Card.Text>{formatoCLP(producto.precio)}</Card.Text>
 
           <div className="d-grid gap-2">
             <Link

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatoCLP } from "../utils/formatoMoneda";
 
 export default function Carrito() {
   const [carrito, setCarrito] = useState([]);
@@ -27,16 +28,50 @@ export default function Carrito() {
   };
 
   // COMPRAR
-  const finalizarCompra = () => {
+  // COMPRAR (REAL)
+  const finalizarCompra = async () => {
     if (!usuario) {
       alert("Debes iniciar sesión para finalizar la compra");
       return;
     }
 
-    alert("Compra realizada con éxito");
-    localStorage.removeItem("carrito");
-    setCarrito([]);
+    if (carrito.length === 0) {
+      alert("El carrito está vacío");
+      return;
+    }
+
+    // Construir detalle de venta
+    const detalles = carrito.map(p => ({
+      productoId: p.id,
+      cantidad: p.cantidad ?? 1,
+      precio: p.precio
+    }));
+
+    try {
+      const res = await fetch("http://localhost:8080/api/ventas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(detalles)
+      });
+
+      if (!res.ok) {
+        throw new Error("Error al registrar la venta");
+      }
+
+      alert("Compra realizada con éxito");
+
+      // Limpiar carrito
+      localStorage.removeItem("carrito");
+      setCarrito([]);
+
+    } catch (error) {
+      console.error(error);
+      alert("No se pudo completar la compra");
+    }
   };
+
 
   return (
     <>
@@ -68,7 +103,7 @@ export default function Carrito() {
                         <td>
                           <strong>{producto.nombre}</strong>
                         </td>
-                        <td>${producto.precio}</td>
+                        <td>{formatoCLP(producto.precio)}</td>
                         <td className="text-center">
                           <button
                             className="btn btn-danger btn-sm"
@@ -84,7 +119,7 @@ export default function Carrito() {
               </div>
 
               <div className="text-end mt-4">
-                <h4>Total: ${total}</h4>
+                <h4>Total: {formatoCLP(total)}</h4>
                 <button
                   className="btn btn-success mt-2"
                   onClick={finalizarCompra}

@@ -6,6 +6,7 @@ import {
   actualizarProducto,
   eliminarProducto
 } from "../data/productosApi";
+import { formatoCLP } from "../utils/formatoMoneda";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function Admin() {
   const [imagen, setImagen] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [metricas, setMetricas] = useState(null);
+  const [cargandoMetricas, setCargandoMetricas] = useState(true);
 
   // PROTECCIÓN ADMIN
   useEffect(() => {
@@ -34,14 +36,37 @@ export default function Admin() {
   useEffect(() => {
     fetch("http://localhost:8080/api/metricas")
       .then(res => res.json())
-      .then(data => setMetricas(data))
-      .catch(console.error);
+      .then(data => {
+        setMetricas(data);
+        setCargandoMetricas(false);
+      })
+      .catch(() => setCargandoMetricas(false));
   }, []);
 
   const cargar = async () => {
     const data = await obtenerProductos();
     setProductos(data);
   };
+
+  const resetVentas = async () => {
+  if (!window.confirm("¿Eliminar TODAS las ventas y métricas?")) return;
+
+  try {
+    await fetch("http://localhost:8080/api/ventas/reset", {
+      method: "DELETE",
+    });
+
+    alert("Ventas eliminadas correctamente");
+
+    // Recargar métricas
+    fetch("http://localhost:8080/api/metricas")
+      .then(res => res.json())
+      .then(data => setMetricas(data));
+
+  } catch (error) {
+    alert("Error al eliminar ventas");
+  }
+};
 
   // SUBMIT
   const handleSubmit = async (e) => {
@@ -94,29 +119,69 @@ export default function Admin() {
     <main className="container my-5">
       <h2>Gestión de Productos</h2>
 
+      <button
+        className="btn btn-outline-danger mb-3"
+        onClick={resetVentas}
+      >
+        Resetear métricas / ventas
+      </button>
+
+      {/* Ingresos */}
+
       {metricas && (
-        <div className="row mb-4">
+        <div className="row mb-4 align-items-stretch">
           <div className="col-md-6">
-            <div className="card text-center p-3">
-              <h6>Ingresos del Mes</h6>
-              <h3 className="text-succes">
-                ${metricas.totalMes}
-              </h3>
+            <div className="card h-100 text-center p-3 fade-in">
+              {cargandoMetricas ? (
+                <>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-6 mb-3"></span>
+                  </div>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-4"></span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h6>Ingresos del Mes</h6>
+                  <h3 className="text-success">
+                      {formatoCLP(metricas.totalMes)}
+                  </h3>
+                </>
+              )}
             </div>
           </div>
 
+          {/* Producto TOP */}
           <div className="col-md-6">
-            <div className="card text-center p-3">
-              <h6>Producto más vendido</h6>
-              <h5>
-                {metricas.productoTop
-                  ? metricas.productoTop.nombre
-                  : "Sin ventas registradas"}
-              </h5>
+            <div className="card h-100 text-center p-3 fade-in">
+              {cargandoMetricas ? (
+                <>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-7 mb-3"></span>
+                  </div>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-5"></span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h6>Producto más vendido</h6>
+                  <h5>
+                    {metricas.productoTop
+                      ? metricas.productoTop.nombre
+                      : "Sin ventas registradas"
+                    }
+                  </h5>
+                </>
+              )}
             </div>
           </div>
+
         </div>
       )}
+
+      <hr className="my-4"></hr>
 
       <form className="row g-3 mb-4" onSubmit={handleSubmit}>
         <div className="col-md-4">
