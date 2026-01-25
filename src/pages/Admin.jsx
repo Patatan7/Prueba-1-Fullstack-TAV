@@ -16,6 +16,7 @@ export default function Admin() {
   const [precio, setPrecio] = useState("");
   const [imagen, setImagen] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [metricas, setMetricas] = useState(null);
 
   // PROTECCIÓN ADMIN
   useEffect(() => {
@@ -28,6 +29,13 @@ export default function Admin() {
   // CARGAR PRODUCTOS
   useEffect(() => {
     cargar();
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/metricas")
+      .then(res => res.json())
+      .then(data => setMetricas(data))
+      .catch(console.error);
   }, []);
 
   const cargar = async () => {
@@ -85,6 +93,30 @@ export default function Admin() {
   return (
     <main className="container my-5">
       <h2>Gestión de Productos</h2>
+
+      {metricas && (
+        <div className="row mb-4">
+          <div className="col-md-6">
+            <div className="card text-center p-3">
+              <h6>Ingresos del Mes</h6>
+              <h3 className="text-succes">
+                ${metricas.totalMes}
+              </h3>
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="card text-center p-3">
+              <h6>Producto más vendido</h6>
+              <h5>
+                {metricas.productoTop
+                  ? metricas.productoTop.nombre
+                  : "Sin ventas registradas"}
+              </h5>
+            </div>
+          </div>
+        </div>
+      )}
 
       <form className="row g-3 mb-4" onSubmit={handleSubmit}>
         <div className="col-md-4">
