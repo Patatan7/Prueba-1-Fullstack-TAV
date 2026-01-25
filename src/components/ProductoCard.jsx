@@ -13,7 +13,10 @@ export default function ProductoCard({ producto, index }) {
       <Card className="h-100">
         <Card.Img
           variant="top"
-          src={producto.imagen}
+          src={producto.imagen || "/img/no-image.png"}
+          onError={(e) => {
+            e.target.src = "/img/no-image.png"
+          }}
           style={{ height: "200px", objectFit: "contain" }}
         />
 

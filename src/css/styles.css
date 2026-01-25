@@ -61,3 +61,11 @@
   padding: 0.25rem 0.6rem;
   line-height: 1;
 }
+
+.nav-divider {
+  color: var(--bs-secondary);
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 0px;
+  line-height: 1;
+}

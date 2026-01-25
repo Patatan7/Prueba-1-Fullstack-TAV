@@ -7,12 +7,21 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     obtenerProductos()
-      .then(setProductos)
-      .catch(console.error)
-  }, [])
+      .then(data => {
+        setProductos(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("No se pudieron cargar los productos");
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main className="container mt-4">
@@ -26,40 +35,26 @@ export default function Home() {
       {/* CAROUSEL */}
       <section className="mb-5">
         <Carousel>
-          <Carousel.Item>
-            <img
-              className="d-block w-100"
-              src="/img/banner1.jpg"
-              alt="Banner 1"
-            />
-          </Carousel.Item>
-
-          <Carousel.Item>
-            <img
-              className="d-block w-100"
-              src="/img/banner2.jpg"
-              alt="Banner 2"
-            />
-          </Carousel.Item>
-
-          <Carousel.Item>
-            <img
-              className="d-block w-100"
-              src="/img/banner3.jpg"
-              alt="Banner 3"
-            />
-          </Carousel.Item>
+          {["/img/banner1.jpg", "/img/banner2.jpg", "/img/banner3.jpg"].map(
+            (img, i) => (
+              <Carousel.Item key={i}>
+                <img className="d-block w-100" src={img} alt={`Banner ${i + 1}`} />
+              </Carousel.Item>
+            )
+          )}
         </Carousel>
       </section>
 
       {/* PRODUCTOS */}
       <section>
+        {loading && <p className="text-center">Cargando productos...</p>}
+        {error && <p className="text-center text-danger">{error}</p>}
+
         <Row>
-          {productos.map((producto, index) => (
+          {productos.map(producto => (
             <ProductoCard
-              key={index}
+              key={producto.id}
               producto={producto}
-              index={index}
             />
           ))}
         </Row>

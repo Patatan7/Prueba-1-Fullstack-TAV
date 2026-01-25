@@ -17,6 +17,9 @@ export default function NavbarApp() {
         <Nav className="ms-auto align-items-center gap-2">
           <Nav.Link as={Link} to="/">Inicio</Nav.Link>
           <Nav.Link as={Link} to="/contacto">Contacto</Nav.Link>
+          <Nav.Link as={Link} to="/aboutus">Sobre nosotros</Nav.Link>
+
+          <span className="nav-divider">|</span>
 
           {usuario ? (
             <>
@@ -28,15 +31,15 @@ export default function NavbarApp() {
                 <Button
                   as={Link}
                   to="/admin"
-                  variant="warning"
+                  variant="success"
                   size="sm"
                 >
-                  Admin
+                  Admininstración
                 </Button>
               )}
 
               <Button
-                variant="outline-light"
+                variant="danger"
                 size="sm"
                 onClick={logout}
               >
