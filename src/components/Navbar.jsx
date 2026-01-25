@@ -12,7 +12,22 @@ export default function NavbarApp() {
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
-        <Navbar.Brand as={Link} to="/">Level-Up</Navbar.Brand>
+        <Navbar.Brand
+          as={Link}
+          to="/"
+          className="d-flex align-items-center gap-2"
+        >
+        <img
+            src="/img/logo-tienda.png"
+            alt="Level-Up"
+            height="32"
+            className="d-inline-block align-top"
+        />
+          <span className="fw-bold text-white">
+            Level-Up
+          </span>
+        </Navbar.Brand>
+
 
         <Nav className="ms-auto align-items-center gap-2">
           <Nav.Link as={Link} to="/">Inicio</Nav.Link>
