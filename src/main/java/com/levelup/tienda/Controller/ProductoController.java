@@ -51,9 +51,11 @@ public class ProductoController {
         producto.setPrecio(datos.getPrecio());
         producto.setImagen(datos.getImagen());
         producto.setDescripcion(datos.getDescripcion());
+        producto.setStock(datos.getStock());
 
         System.out.println("Producto Actualizado: " + producto.getNombre() 
-        + "\nId: " + producto.getId());
+        + "\nId: " + producto.getId() 
+        + "\nStock: " +producto.getStock());
         return repo.save(producto);
     }
 
