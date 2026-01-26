@@ -55,6 +55,8 @@ export default function NavbarApp() {
 
               <Button
                 variant="danger"
+                as={Link}
+                to="/"
                 size="sm"
                 onClick={logout}
               >
