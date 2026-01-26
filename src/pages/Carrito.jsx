@@ -28,7 +28,6 @@ export default function Carrito() {
   };
 
   // COMPRAR
-  // COMPRAR (REAL)
   const finalizarCompra = async () => {
     if (!usuario) {
       alert("Debes iniciar sesión para finalizar la compra");
@@ -70,6 +69,8 @@ export default function Carrito() {
       console.error(error);
       alert("No se pudo completar la compra");
     }
+
+    vaciarCarrito();
   };
 
 

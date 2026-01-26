@@ -19,6 +19,7 @@ export default function Admin() {
   const [descripcion, setDescripcion] = useState("");
   const [metricas, setMetricas] = useState(null);
   const [cargandoMetricas, setCargandoMetricas] = useState(true);
+  const [stock, setStock] = useState("");
 
   // PROTECCIÓN ADMIN
   useEffect(() => {
@@ -77,6 +78,7 @@ export default function Admin() {
       precio: Number(precio),
       imagen,
       descripcion,
+      stock: Number(stock)
     };
 
     try {
@@ -99,6 +101,7 @@ export default function Admin() {
     setPrecio(p.precio);
     setImagen(p.imagen || "");
     setDescripcion(p.descripcion || "");
+    setStock(p.stock);
   };
 
   const eliminar = async (id) => {
@@ -225,6 +228,18 @@ export default function Admin() {
           />
         </div>
 
+        <div className="col-md-2">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Stock"
+            value={stock}
+            onChange={e => setStock(e.target.value)}
+            min="0"
+            required
+          />
+        </div>
+
         <div className="col-md-2 d-grid">
           <button className="btn btn-primary">
             {id ? "Actualizar" : "Crear"}
@@ -239,6 +254,7 @@ export default function Admin() {
             <th>Precio</th>
             <th>Imagen</th>
             <th>Descripción</th>
+            <th>Stock</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -246,9 +262,10 @@ export default function Admin() {
           {productos.map(p => (
             <tr key={p.id}>
               <td>{p.nombre}</td>
-              <td>${p.precio}</td>
+              <td>{formatoCLP(p.precio)}</td>
               <td>{p.imagen && <img src={p.imagen} width="50" />}</td>
               <td>{p.descripcion}</td>
+              <td><span className="fade-in">{p.stock}</span></td>
               <td>
                 <button
                   className="btn btn-warning btn-sm me-2"

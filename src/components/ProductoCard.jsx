@@ -6,8 +6,14 @@ import { useContext } from "react";
 import { CarritoContext } from "../context/CarritoContext";
 import { formatoCLP } from "../utils/formatoMoneda";
 
-export default function ProductoCard({ producto, index }) {
-  const { agregarAlCarrito } = useContext(CarritoContext);
+export default function ProductoCard({ producto }) {
+  const { carrito, agregarAlCarrito } = useContext(CarritoContext);
+
+  const cantidadEnCarrito = carrito.filter(
+    p => p.id === producto.id
+  ).length;
+
+  const sinStock = cantidadEnCarrito >= producto.stock;
 
   return (
     <Col md={4} className="mb-4">
@@ -16,7 +22,7 @@ export default function ProductoCard({ producto, index }) {
           variant="top"
           src={producto.imagen || "/img/no-image.png"}
           onError={(e) => {
-            e.target.src = "/img/no-image.png"
+            e.target.src = "/img/no-image.png";
           }}
           style={{ height: "200px", objectFit: "contain" }}
         />
@@ -26,6 +32,10 @@ export default function ProductoCard({ producto, index }) {
           <Card.Text>{formatoCLP(producto.precio)}</Card.Text>
 
           <div className="d-grid gap-2">
+            <p className="text-muted">
+              Stock: {producto.stock}
+            </p>
+
             <Link
               to={`/producto/${producto.id}`}
               className="btn btn-outline-secondary btn-sm"
@@ -33,8 +43,12 @@ export default function ProductoCard({ producto, index }) {
               Ver detalle
             </Link>
 
-            <Button size="sm" onClick={() => agregarAlCarrito(producto)}>
-              Añadir al carrito
+            <Button
+              size="sm"
+              disabled={sinStock}
+              onClick={() => agregarAlCarrito(producto)}
+            >
+              {sinStock ? "Agotado" : "Añadir al carrito"}
             </Button>
           </div>
         </Card.Body>

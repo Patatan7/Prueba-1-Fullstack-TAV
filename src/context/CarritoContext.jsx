@@ -13,11 +13,26 @@ export function CarritoProvider({ children }) {
 
   // Guardar cada cambio
   useEffect(() => {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
+    if (carrito.length > 0) {
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+    } else {
+      localStorage.removeItem("carrito");
+    }
   }, [carrito]);
 
   const agregarAlCarrito = (producto) => {
-    setCarrito((prev) => [...prev, producto]);
+    setCarrito(prev => { 
+      const cantidadActual = prev.filter(
+        p => p.id === producto.id
+      ).length;
+
+      if (cantidadActual >= producto.stock) {
+        alert("No hay más stock disponible");
+        return prev;
+      }
+
+      return [...prev, producto];
+     });
   };
 
   const eliminarDelCarrito = (index) => {

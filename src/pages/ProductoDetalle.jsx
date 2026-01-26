@@ -5,10 +5,11 @@ import {
   obtenerProductoPorId,
   obtenerProductos
 } from "../data/productosApi";
+import { formatoCLP } from "../utils/formatoMoneda";
 
 export default function ProductoDetalle() {
   const { id } = useParams();
-  const { agregarAlCarrito } = useContext(CarritoContext);
+  const { carrito, agregarAlCarrito } = useContext(CarritoContext);
 
   const [producto, setProducto] = useState(null);
   const [otrosProductos, setOtrosProductos] = useState([]);
@@ -47,13 +48,19 @@ export default function ProductoDetalle() {
     );
   }
 
-  if (error) {
+  if (error || !producto) {
     return (
       <main className="container my-5 text-center text-danger">
         <p>{error}</p>
       </main>
     );
   }
+
+  const cantidadEnCarrito = carrito.filter(
+    p => p.id === producto.id
+  ).length;
+
+  const sinStock = cantidadEnCarrito >= producto.stock;
 
   return (
     <main className="container my-5">
@@ -76,57 +83,79 @@ export default function ProductoDetalle() {
             {producto.descripcion || "Sin descripción disponible"}
           </p>
 
-          <h4 className="text-success">${producto.precio}</h4>
+          <h4 className="text-success">
+            {formatoCLP(producto.precio)}
+          </h4>
+
+          <p className="text-muted">
+            Stock: {producto.stock}
+          </p>
 
           <button
             className="btn btn-primary mt-3"
+            disabled={sinStock}
             onClick={() => agregarAlCarrito(producto)}
           >
-            Añadir al carrito
+            {sinStock ? "Agotado" : "Añadir al carrito"}
           </button>
         </div>
       </section>
 
-      {/* OTROS */}
+      {/* OTROS PRODUCTOS */}
       {otrosProductos.length > 0 && (
         <section>
           <h3 className="mb-4">Otros productos</h3>
 
           <div className="row">
-            {otrosProductos.map((p) => (
-              <div className="col-md-3 mb-4" key={p.id}>
-                <div className="card h-100">
-                  <img
-                    src={p.imagen || "/img/no-image.png"}
-                    onError={(e) => e.target.src = "/img/no-image.png"}
-                    className="card-img-top"
-                    style={{ height: "150px", objectFit: "contain" }}
-                    alt={p.nombre}
-                  />
+            {otrosProductos.map((p) => {
+              const cantidadOtros = carrito.filter(
+                c => c.id === p.id
+              ).length;
 
-                  <div className="card-body text-center">
-                    <h6 className="card-title">{p.nombre}</h6>
-                    <p className="card-text">${p.precio}</p>
+              const sinStockOtros = cantidadOtros >= p.stock;
 
-                    <div className="d-grid gap-2">
-                      <Link
-                        to={`/producto/${p.id}`}
-                        className="btn btn-outline-primary btn-sm"
-                      >
-                        Ver detalle
-                      </Link>
+              return (
+                <div className="col-md-3 mb-4" key={p.id}>
+                  <div className="card h-100">
+                    <img
+                      src={p.imagen || "/img/no-image.png"}
+                      onError={(e) => e.target.src = "/img/no-image.png"}
+                      className="card-img-top"
+                      style={{ height: "150px", objectFit: "contain" }}
+                      alt={p.nombre}
+                    />
 
-                      <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => agregarAlCarrito(p)}
-                      >
-                        Añadir al carrito
-                      </button>
+                    <div className="card-body text-center">
+                      <h6 className="card-title">{p.nombre}</h6>
+                      <p className="card-text">
+                        {formatoCLP(p.precio)}
+                      </p>
+
+                      <p className="text-muted">
+                        Stock: {p.stock}
+                      </p>
+
+                      <div className="d-grid gap-2">
+                        <Link
+                          to={`/producto/${p.id}`}
+                          className="btn btn-outline-primary btn-sm"
+                        >
+                          Ver detalle
+                        </Link>
+
+                        <button
+                          className="btn btn-primary btn-sm"
+                          disabled={sinStockOtros}
+                          onClick={() => agregarAlCarrito(p)}
+                        >
+                          {sinStockOtros ? "Agotado" : "Añadir al carrito"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
